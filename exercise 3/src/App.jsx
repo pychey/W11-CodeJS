@@ -24,6 +24,30 @@ const ORDERS = [
 export default function App() {
   const [orders, setOrders] = React.useState(ORDERS);
 
+  function getTotalPrice(orders){
+    let total = 0;
+    orders.forEach(order => {
+      total += order.price * order.quantity;
+    });
+    return total;
+  }
+
+  function onMinus(clickKeyIndex){
+    const updatedOrder = orders.map((order,index)=>{
+      if(index===clickKeyIndex) return {...order, quantity: order.quantity - 1}
+      else return order;
+    });
+    setOrders(updatedOrder);
+  }
+
+  function onPlus(clickKeyIndex){
+    const updatedOrder = orders.map((order,index)=>{
+      if(index===clickKeyIndex) return {...order, quantity: order.quantity + 1}
+      else return order;
+    });
+    setOrders(updatedOrder);
+  }
+
   return (
     <>
       <header>
@@ -31,10 +55,11 @@ export default function App() {
       </header>
 
       <div className="order-list">
-        <OrderCard></OrderCard>
+        {orders.map((order,index)=>(
+          <OrderCard onPlus={onPlus} onMinus={onMinus} key={index} keyIndex={index} product={order.product} price={order.price} quantity={order.quantity}></OrderCard>))}
       </div>
 
-      <CheckoutButton total="TODO"></CheckoutButton>
+      <CheckoutButton total={getTotalPrice(orders)}></CheckoutButton>
     </>
   );
 }
